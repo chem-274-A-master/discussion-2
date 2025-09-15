@@ -63,49 +63,123 @@ After predicting, try writing a program and see if you were correct.
    r = 4.0;
    ```
 
-## Programming Paradigms
+## Understanding Object State Through Prediction
 
-Reading: [Overview of Programming Paradigms](https://doi-org.libproxy.berkeley.edu/10.1515/9783110564990-002) (2.1, 2.2, 2.3, 2.4) from "Mathematical Foundations of Data Science Using R".
+One of the most important concepts in object-oriented programming is understanding when and how an object's state should change. This exercise will help you develop intuition about designing methods that interact with object state.
 
-To complete this discussion session, your group should answer the questions in the README in a markdown file. 
+Below is a simple `Counter` class that will help us explore these concepts:
 
-You should then complete the programming tasks.
-These tasks are meant to be collaborative, so work together to ensure that all group members understand the code.
-Discussions are meant to be completed tonight and should be submitted at the end of discussion section.
+``` c++
+class Counter {
+private:
+    int value_;
 
-After the programming tasks, there are questions about a molecular science library called OpenMM that we will be using in our molecular dynamics lab.
+public:
+    Counter(int initial_value = 0) : value_(initial_value) {}
+    
+    int get_value() const { return value_; }
+    
+    void increment() { value_++; }
+    
+    // Method 1: Returns a calculation without changing state
+    int calculate_sum_to(int target) const {
+        int sum = 0;
+        for (int i = value_; i <= target; i++) {
+            sum += i;
+        }
+        return sum;
+    }
+    
+    // Method 2: Changes the object's state during calculation
+    int count_up_to(int target) {
+        int sum = 0;
+        while (value_ <= target) {
+            sum += value_;
+            value_++;
+        }
+        return sum;
+    }
+};
+```
 
-### Discussion Questions
+### Part 1: Predict the Behavior
 
-1. What are the characteristics of an imperative programming style or language? 
-Write this in your own words, rather than copying text from the reading.
+For each code snippet below, predict what will happen before running the code. Consider:
+- What is the value of the counter's internal `value_` at each step?
+- What gets printed?
+- Does the object's state change?
 
-1. What key features distinguishes imperative programming and functional programming? 
-How are variables different in functional vs. imperative programming?
-   
-1. Summarize the key features of each of the following programming paradigms: 
-   - Procedural
-   - Object-Oriented
-   - Functional
+**Snippet 1:**
+```c++
+Counter c(3);
+std::cout << "Initial: " << c.get_value() << std::endl;
+int result = c.calculate_sum_to(5);
+std::cout << "Sum result: " << result << std::endl;
+std::cout << "Counter after calculation: " << c.get_value() << std::endl;
+```
+**Your Prediction:**
+- Initial value_: ___
+- Sum result: ___
+- Final value_: ___
 
-1. Do the members of your group have a preference for programming paradigm? 
-What paradigm or paradigms does everyone have experience with? 
-What programming paradigm did you program with when you started?
+**Snippet 2:**
+```c++
+Counter c(3);
+std::cout << "Initial: " << c.get_value() << std::endl;
+int result = c.count_up_to(5);
+std::cout << "Count result: " << result << std::endl;
+std::cout << "Counter after counting: " << c.get_value() << std::endl;
+```
+**Your Prediction:**
+- Initial value_: ___
+- Sum result: ___
+- Final value_: ___
 
-### Programming Paradigms: Tasks
+**Snippet 3:**
+```c++
+Counter c(2);
+std::cout << "First calculation: " << c.calculate_sum_to(4) << std::endl;
+std::cout << "Second calculation: " << c.calculate_sum_to(4) << std::endl;
+std::cout << "Counter value: " << c.get_value() << std::endl;
+```
+**Your Prediction:**
+- Initial value_: ___
+- Sum result: ___
+- Final value_: ___
 
-For the programming task, you will be writing a few different versions of a factorial. If you need to refresh your memory for a factorial, please read the first part of the [Wikipedia page](https://en.wikipedia.org/wiki/Factorial).
+### Part 2: Test Your Predictions
+Write a complete C++ program that tests each snippet above. Compile and run it to see if your predictions were correct.
 
-There is pseudo-code for an imperative (2.5) and functional (2.6) version of a factorial in your reading.
+### Part 3: Design Discussion
 
-For each of these tasks, you should write a C++ program with the name `paradigm_factorial.cpp`, where the word `paradigm` is replaced by the paradigm you are implementing. 
-
-1. `procedural` - Create a procedural version of your factorial by writing a function called `factorial` which returns the result of the factorial calculation.
-
-1. `object oriented` - Write a class for computing factorials. The object should be initialized with a a number and should have a method called `calculate`. The result should be stored in an attribute of the object.
-
-1. **Optional** `functional` - For the functional version of this calculation, you will need to utilize something called **recursion**. 
-In recursive functions, functions will call themselves.
- You can see pseudo-code for a functional factorial in 2.6 of the discussion reading.
+Work with your group to discuss these questions:
+1. **Consistency:** Which method (`calculate_sum_to` vs `count_up_to`) gives consistent results when called multiple times? Why might this be important?
 
 
+1. **Single Responsibility**: Notice that `calculate_sum_to` only returns a value, while `count_up_to both` returns a value AND changes the object's state. This violates a key design principle: methods should generally do one thing well.
+
+
+   - What problems arise when a method does both?
+   - How does this make the code harder to understand and debug?
+
+1. **Side Effects**: A "side effect" occurs when a method changes something beyond just returning a value. `count_up_to` has the side effect of changing `value_`.
+
+
+   - Why might side effects in calculation methods be problematic?
+   - When might side effects be intentional and useful?
+
+1. **Method Design**: How can you tell from a method's signature whether it will change object state? (Hint: look at the `const` keyword)
+
+
+   - Why is `calculate_sum_to` marked const but `count_up_to` is not?
+   - What promise does `const` make to users of your class?
+
+1. **Application to Scientific Computing**: In scientific code, calculations should generally be **reproducible** and **predictable**.
+
+
+   - Should a method that calculates potential energy also change the molecule's position?
+   - What problems could arise if energy calculations had unexpected side effects?
+   - How does this principle apply to your harmonic oscillator assignment?
+ 
+### Reflection
+Write a brief paragraph about what you learned regarding object state management. How will this influence how you design the methods in your Diatomic class?
