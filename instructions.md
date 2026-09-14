@@ -1,4 +1,29 @@
-# Discussion Section - Week 4
+# Discussion Section - Week 3
+
+## C++ - Classes
+
+Psi4 is a popular, open-source quantum chemistry package. We will see more of Psi4 later in the course,
+where you will use it to run simulations.
+
+Psi4 is a mix of Python and C++. Look at the following C++ header file from the Psi4 package:
+
+https://github.com/psi4/psi4/blob/1fb8968fe95e6f8c3c17b94ddd3b277e83965d67/psi4/src/psi4/libmints/gshell.h#L56
+
+This file describes some "basis set" information that quantum chemistry
+calculations must have. The link should take you directly to the "ShellInfo"
+class.
+
+We will talk a little bit more about basis sets later in the course. For now,
+look at the code and answer the following questions:
+
+1. What constructors are there for there for the ShellInfo class? Is there a copy constructor?
+
+1. Is there a destructor? If so, what does it do? If not, why isn't one written?
+
+1. The functions are not defined in this file. Where are they defined?
+
+1. Is there anything you do not understand yet?
+
 
 ## C++ Review - References
 
